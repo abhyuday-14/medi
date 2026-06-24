@@ -1,0 +1,58 @@
+{
+  "expo": {
+    "name": "meditrack",
+    "slug": "meditrack",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "MediTrack needs your location to share your GPS coordinates with emergency contacts in case of an SOS event.",
+        "NSFaceIDUsageDescription": "MediTrack uses biometric authentication to protect your sensitive health tracking records."
+      }
+    },
+    "android": {
+      "package": "com.gitadiiii.meditrack",
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "CAMERA",
+        "USE_BIOMETRIC",
+        "USE_FINGERPRINT",
+        "RECEIVE_BOOT_COMPLETED",
+        "WAKE_LOCK"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-sqlite",
+      "expo-sharing",
+      "expo-local-authentication",
+      "expo-notifications",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "MediTrack needs photo access to let you upload prescriptions and symptom logs.",
+          "cameraPermission": "MediTrack needs camera access to let you take photos of prescriptions and symptom details."
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "MediTrack needs location access to share your GPS coordinates with emergency contacts in case of an SOS event."
+        }
+      ]
+    ]
+  }
+}
