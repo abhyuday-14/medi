@@ -168,6 +168,9 @@ export default function App() {
         * {
           font-family: 'Urbanist', sans-serif !important;
         }
+        div[dir="auto"], span, input, button, textarea, select {
+          font-family: 'Urbanist', sans-serif !important;
+        }
       `));
       document.head.appendChild(style);
     }

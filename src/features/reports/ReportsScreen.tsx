@@ -22,6 +22,8 @@ import { deleteLocalFile } from '../../services/fileService';
 import * as Sharing from 'expo-sharing';
 import { Card } from '../../components/Card';
 import { Button } from '../../components/Button';
+import { BackgroundGrid } from '../../components/BackgroundGrid';
+import { LinearGradient as ExpoLinearGradient } from 'expo-linear-gradient';
 
 export const ReportsScreen: React.FC = () => {
   const { themeMode, contrastMode, fontSizeScale, user } = useAppStore();
@@ -236,7 +238,9 @@ export const ReportsScreen: React.FC = () => {
   };
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: theme.background }]}>
+    <View style={{ flex: 1, backgroundColor: theme.background }}>
+      <BackgroundGrid />
+      <ScrollView style={[styles.container, { backgroundColor: 'transparent' }]} contentContainerStyle={{ paddingBottom: 120 }}>
       <Text style={[styles.title, { color: theme.text, fontSize: 22 * fontScale }]}>Clinical PDF Reports</Text>
       <Text style={[styles.subtitle, { color: theme.textSecondary, fontSize: 15 * fontScale }]}>
         Compile and export structured clinical records to share with your physicians and specialists.
@@ -254,10 +258,18 @@ export const ReportsScreen: React.FC = () => {
                 backgroundColor: dateRange === '7' ? theme.primary : theme.card,
                 borderColor: theme.border,
                 borderWidth: 1,
+                overflow: 'hidden',
               },
             ]}
           >
-            <Text style={[styles.selectorBtnText, { color: dateRange === '7' ? '#FFFFFF' : theme.text, fontSize: 14 * fontScale }]}>
+            {dateRange === '7' && (
+              <ExpoLinearGradient
+                colors={themeMode === 'dark' ? ['#3B82F6', '#1E3A8A'] : ['#FF6B6B', '#EF4444', '#D92A2A']}
+                start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
+                style={StyleSheet.absoluteFill}
+              />
+            )}
+            <Text style={[styles.selectorBtnText, { color: dateRange === '7' ? '#FFFFFF' : theme.text, fontSize: 14 * fontScale, zIndex: 1 }]}>
               Weekly (7d)
             </Text>
           </TouchableOpacity>
@@ -271,10 +283,18 @@ export const ReportsScreen: React.FC = () => {
                 borderColor: theme.border,
                 borderWidth: 1,
                 marginLeft: 8,
+                overflow: 'hidden',
               },
             ]}
           >
-            <Text style={[styles.selectorBtnText, { color: dateRange === '30' ? '#FFFFFF' : theme.text, fontSize: 14 * fontScale }]}>
+            {dateRange === '30' && (
+              <ExpoLinearGradient
+                colors={themeMode === 'dark' ? ['#3B82F6', '#1E3A8A'] : ['#FF6B6B', '#EF4444', '#D92A2A']}
+                start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
+                style={StyleSheet.absoluteFill}
+              />
+            )}
+            <Text style={[styles.selectorBtnText, { color: dateRange === '30' ? '#FFFFFF' : theme.text, fontSize: 14 * fontScale, zIndex: 1 }]}>
               Monthly (30d)
             </Text>
           </TouchableOpacity>
@@ -288,10 +308,18 @@ export const ReportsScreen: React.FC = () => {
                 borderColor: theme.border,
                 borderWidth: 1,
                 marginLeft: 8,
+                overflow: 'hidden',
               },
             ]}
           >
-            <Text style={[styles.selectorBtnText, { color: dateRange === '90' ? '#FFFFFF' : theme.text, fontSize: 14 * fontScale }]}>
+            {dateRange === '90' && (
+              <ExpoLinearGradient
+                colors={themeMode === 'dark' ? ['#3B82F6', '#1E3A8A'] : ['#FF6B6B', '#EF4444', '#D92A2A']}
+                start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
+                style={StyleSheet.absoluteFill}
+              />
+            )}
+            <Text style={[styles.selectorBtnText, { color: dateRange === '90' ? '#FFFFFF' : theme.text, fontSize: 14 * fontScale, zIndex: 1 }]}>
               Quarterly (90d)
             </Text>
           </TouchableOpacity>
@@ -388,7 +416,8 @@ export const ReportsScreen: React.FC = () => {
           ))
         )}
       </Card>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 };
 

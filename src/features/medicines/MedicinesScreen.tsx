@@ -18,6 +18,8 @@ import { scheduleMedicationReminders, cancelAllReminders, scheduleRefillAlert } 
 import { Card } from '../../components/Card';
 import { Input } from '../../components/Input';
 import { Button } from '../../components/Button';
+import { BackgroundGrid } from '../../components/BackgroundGrid';
+import { LinearGradient as ExpoLinearGradient } from 'expo-linear-gradient';
 
 export const MedicinesScreen: React.FC = () => {
   const isFocused = useIsFocused();
@@ -416,16 +418,23 @@ export const MedicinesScreen: React.FC = () => {
   const historyGrouped = groupLogsByDate(historyLogs);
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.background }]}>
+    <View style={{ flex: 1, backgroundColor: theme.background }}>
+      <BackgroundGrid />
+      <View style={[styles.container, { backgroundColor: 'transparent' }]}>
       {/* Dynamic Header row */}
       <View style={styles.topRow}>
         <View style={styles.dropdownContainer}>
           <TouchableOpacity
             onPress={toggleDropdown}
-            style={[styles.dropdownSelect, { backgroundColor: theme.primary }]}
+            style={[styles.dropdownSelect, { backgroundColor: theme.primary, overflow: 'hidden' }]}
             activeOpacity={0.85}
           >
-            <Text style={styles.dropdownSelectText}>
+            <ExpoLinearGradient
+              colors={themeMode === 'dark' ? ['#3B82F6', '#1E3A8A'] : ['#FF6B6B', '#EF4444', '#D92A2A']}
+              start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
+              style={StyleSheet.absoluteFill}
+            />
+            <Text style={[styles.dropdownSelectText, { zIndex: 1 }]}>
               {viewMode === 'schedule' ? '▼ My Medicine Schedules' : '▼ My Medicine History'}
             </Text>
           </TouchableOpacity>
@@ -477,10 +486,15 @@ export const MedicinesScreen: React.FC = () => {
 
         <TouchableOpacity
           onPress={handleOpenAdd}
-          style={[styles.addBtn, { backgroundColor: theme.primary }]}
+          style={[styles.addBtn, { backgroundColor: theme.primary, overflow: 'hidden' }]}
           activeOpacity={0.85}
         >
-          <Text style={styles.addBtnText}>+ Add Routine</Text>
+          <ExpoLinearGradient
+            colors={themeMode === 'dark' ? ['#3B82F6', '#1E3A8A'] : ['#FF6B6B', '#EF4444', '#D92A2A']}
+            start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
+            style={StyleSheet.absoluteFill}
+          />
+          <Text style={[styles.addBtnText, { zIndex: 1 }]}>+ Add Routine</Text>
         </TouchableOpacity>
       </View>
 
@@ -793,6 +807,7 @@ export const MedicinesScreen: React.FC = () => {
           </View>
         </View>
       </Modal>
+      </View>
     </View>
   );
 };
@@ -819,7 +834,7 @@ const styles = StyleSheet.create({
   },
   dropdownSelect: {
     height: 48,
-    borderRadius: 8,
+    borderRadius: 24,
     justifyContent: 'center',
     paddingHorizontal: 12,
     alignSelf: 'flex-start',
@@ -853,7 +868,7 @@ const styles = StyleSheet.create({
   addBtn: {
     width: '36%',
     height: 48,
-    borderRadius: 8,
+    borderRadius: 24,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -864,7 +879,7 @@ const styles = StyleSheet.create({
   },
   scrollList: {
     padding: 16,
-    paddingBottom: 40,
+    paddingBottom: 120,
   },
   emptyContainer: {
     alignItems: 'center',
@@ -922,7 +937,7 @@ const styles = StyleSheet.create({
   statusBadge: {
     paddingVertical: 4,
     paddingHorizontal: 10,
-    borderRadius: 6,
+    borderRadius: 12,
   },
   statusTaken: {
     backgroundColor: '#D1FAE5',
@@ -939,8 +954,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   actionBtn: {
-    paddingHorizontal: 10,
-    borderRadius: 6,
+    paddingHorizontal: 12,
+    borderRadius: 100,
     justifyContent: 'center',
     alignItems: 'center',
     height: 36,

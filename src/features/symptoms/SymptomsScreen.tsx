@@ -10,6 +10,8 @@ import { Card } from '../../components/Card';
 import { Input } from '../../components/Input';
 import { Button } from '../../components/Button';
 import { VitalBadge } from '../../components/VitalBadge';
+import { BackgroundGrid } from '../../components/BackgroundGrid';
+import { LinearGradient as ExpoLinearGradient } from 'expo-linear-gradient';
 
 export const SymptomsScreen: React.FC = () => {
   const isFocused = useIsFocused();
@@ -127,15 +129,22 @@ export const SymptomsScreen: React.FC = () => {
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.background }]}>
+    <View style={{ flex: 1, backgroundColor: theme.background }}>
+      <BackgroundGrid />
+      <View style={[styles.container, { backgroundColor: 'transparent' }]}>
       {/* Header with log button */}
       <View style={styles.header}>
         <Text style={[styles.title, { color: theme.text, fontSize: 22 * fontScale }]}>Symptom Diary</Text>
         <TouchableOpacity
           onPress={() => setModalVisible(true)}
-          style={[styles.addBtn, { backgroundColor: theme.primary, minHeight: 48, minWidth: 48 }]}
+          style={[styles.addBtn, { backgroundColor: theme.primary, minHeight: 48, minWidth: 48, overflow: 'hidden' }]}
         >
-          <Text style={styles.addBtnText}>+ Log Symptom</Text>
+          <ExpoLinearGradient
+            colors={themeMode === 'dark' ? ['#3B82F6', '#1E3A8A'] : ['#FF6B6B', '#EF4444', '#D92A2A']}
+            start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
+            style={StyleSheet.absoluteFill}
+          />
+          <Text style={[styles.addBtnText, { zIndex: 1 }]}>+ Log Symptom</Text>
         </TouchableOpacity>
       </View>
 
@@ -297,6 +306,7 @@ export const SymptomsScreen: React.FC = () => {
           </View>
         </View>
       </Modal>
+      </View>
     </View>
   );
 };
@@ -332,7 +342,7 @@ const styles = StyleSheet.create({
   },
   scrollList: {
     padding: 16,
-    paddingBottom: 40,
+    paddingBottom: 120,
   },
   emptyContainer: {
     alignItems: 'center',

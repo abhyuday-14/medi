@@ -2,6 +2,7 @@ import React from 'react';
 import { Pressable, Text, ActivityIndicator, StyleSheet, Platform } from 'react-native';
 import { useAppStore } from '../store/appStore';
 import { COLORS, getFontScale, TOUCH_TARGET } from '../config/theme';
+import { LinearGradient as ExpoLinearGradient } from 'expo-linear-gradient';
 
 interface ButtonProps {
   title: string;
@@ -73,8 +74,16 @@ export const Button: React.FC<ButtonProps> = ({
         style,
       ]}
     >
+      {(variant === 'primary' || variant === 'danger') && !disabled && (
+        <ExpoLinearGradient
+          colors={variant === 'danger' ? ['#FF6B6B', '#EF4444', '#D92A2A'] : themeMode === 'dark' ? ['#3B82F6', '#1E3A8A'] : ['#FF6B6B', '#EF4444', '#D92A2A']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={[StyleSheet.absoluteFill, { borderRadius: 32 }]}
+        />
+      )}
       {loading ? (
-        <ActivityIndicator color={variant === 'secondary' ? theme.primary : '#FFFFFF'} />
+        <ActivityIndicator color={variant === 'secondary' ? theme.primary : '#FFFFFF'} style={{ zIndex: 1 }} />
       ) : (
         <Text
           style={[
@@ -83,6 +92,7 @@ export const Button: React.FC<ButtonProps> = ({
               color: disabled ? theme.textSecondary : colors.text,
               fontSize: 16 * fontScale,
               fontWeight: contrastMode === 'high' ? '900' : '700',
+              zIndex: 1,
             },
           ]}
         >
@@ -102,6 +112,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     marginVertical: 6,
+    overflow: 'hidden',
   },
   text: {
     textAlign: 'center',

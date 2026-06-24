@@ -21,8 +21,9 @@ import { Card } from '../../components/Card';
 import { Button } from '../../components/Button';
 import { VitalBadge, VitalStatus } from '../../components/VitalBadge';
 import { HeartPulse, Pill, Thermometer, FileText, Bell, PhoneCall } from 'lucide-react-native';
-import Svg, { Circle, G, Defs, Pattern, Rect, LinearGradient as SvgLinearGradient, Stop, RadialGradient, Path } from 'react-native-svg';
+import Svg, { Circle, G } from 'react-native-svg';
 import { LinearGradient as ExpoLinearGradient } from 'expo-linear-gradient';
+import { BackgroundGrid } from '../../components/BackgroundGrid';
 
 interface DashboardScreenProps {
   navigation: any;
@@ -233,28 +234,7 @@ Please contact me immediately.`;
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.background }}>
-      {/* Dynamic Fading Grid Background */}
-      <View style={[StyleSheet.absoluteFill, { overflow: 'hidden' }]} pointerEvents="none">
-        <Svg width="100%" height="100%" style={{ position: 'absolute', top: 0, left: 0 }}>
-          <Defs>
-            <Pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-              <Path d="M 40 0 L 0 0 0 40" fill="none" stroke={theme.text} strokeWidth="0.5" strokeOpacity="0.08" />
-            </Pattern>
-            <SvgLinearGradient id="fade" x1="0" y1="0" x2="0" y2="1">
-              <Stop offset="0" stopColor={theme.background} stopOpacity="0" />
-              <Stop offset="0.6" stopColor={theme.background} stopOpacity="0.8" />
-              <Stop offset="1" stopColor={theme.background} stopOpacity="1" />
-            </SvgLinearGradient>
-            <RadialGradient id="glow" cx="50%" cy="0%" r="70%">
-              <Stop offset="0" stopColor={theme.primary} stopOpacity="0.15" />
-              <Stop offset="1" stopColor={theme.background} stopOpacity="0" />
-            </RadialGradient>
-          </Defs>
-          <Rect width="100%" height="100%" fill="url(#grid)" />
-          <Rect width="100%" height="100%" fill="url(#glow)" />
-          <Rect width="100%" height="100%" fill="url(#fade)" />
-        </Svg>
-      </View>
+      <BackgroundGrid />
 
       <ScrollView
         style={{ flex: 1 }}
@@ -395,7 +375,7 @@ Please contact me immediately.`;
       </View>
 
       {/* EMERGENCY SOS BUTTON */}
-      <View style={{ marginTop: 4, width: '100%', shadowColor: theme.danger, shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.4, shadowRadius: 16, elevation: 12 }}>
+      <View style={{ marginTop: 4, width: '100%', borderRadius: 28, backgroundColor: 'transparent', shadowColor: theme.danger, shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.4, shadowRadius: 16, elevation: 12 }}>
         <TouchableOpacity
           activeOpacity={0.8}
           onPress={handleSOS}
@@ -450,7 +430,7 @@ Please contact me immediately.`;
             >
               <View style={styles.checkItemLeft}>
                 <Text style={[styles.checkTime, { color: theme.primary, fontSize: 15 * fontScale }]}>{item.time}</Text>
-                <View style={{ marginLeft: 12 }}>
+                <View style={{ marginLeft: 16, flex: 1, paddingRight: 8 }}>
                   <Text style={[styles.checkMedName, { color: theme.text, fontSize: 16 * fontScale }]}>
                     {item.med.name}
                   </Text>
@@ -616,10 +596,10 @@ Please contact me immediately.`;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     paddingHorizontal: 16,
     paddingTop: Platform.OS === 'ios' ? 64 : 40,
-    paddingBottom: 100,
+    paddingBottom: 120,
   },
   loading: {
     flex: 1,

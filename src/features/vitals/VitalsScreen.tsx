@@ -8,6 +8,8 @@ import { Card } from '../../components/Card';
 import { Input } from '../../components/Input';
 import { Button } from '../../components/Button';
 import { VitalBadge, VitalStatus } from '../../components/VitalBadge';
+import { BackgroundGrid } from '../../components/BackgroundGrid';
+import { LinearGradient as ExpoLinearGradient } from 'expo-linear-gradient';
 
 export const VitalsScreen: React.FC = () => {
   const isFocused = useIsFocused();
@@ -155,217 +157,225 @@ export const VitalsScreen: React.FC = () => {
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.background }]}>
-      {/* Title Header with Add Button */}
-      <View style={styles.header}>
-        <Text style={[styles.title, { color: theme.text, fontSize: 22 * fontScale }]}>Vitals Log History</Text>
-        <TouchableOpacity
-          onPress={() => setModalVisible(true)}
-          style={[styles.addBtn, { backgroundColor: theme.primary, minHeight: 48, minWidth: 48 }]}
-        >
-          <Text style={styles.addBtnText}>+ Log Vitals</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* History scroll list */}
-      <ScrollView contentContainerStyle={styles.scrollList}>
-        {vitalsList.length === 0 ? (
-          <View style={styles.emptyContainer}>
-            <Text style={{ fontSize: 40 }}>🩸</Text>
-            <Text style={{ color: theme.textSecondary, fontSize: 16 * fontScale, marginTop: 8 }}>
-              No vitals logged yet. Tap the button above to log your first record.
-            </Text>
-          </View>
-        ) : (
-          vitalsList.map((item) => {
-            const bp = getBpStatus(item.systolic, item.diastolic);
-            const sugar = getSugarStatus(item.blood_sugar_fasting);
-            const oxygen = getSpo2Status(item.spo2);
-            const temp = getTempStatus(item.temperature);
-
-            return (
-              <Card key={item.id} style={styles.vitalCard}>
-                {/* Date Header */}
-                <View style={styles.cardHeader}>
-                  <Text style={[styles.cardTime, { color: theme.textSecondary, fontSize: 14 * fontScale }]}>
-                    📅 {new Date(item.timestamp).toLocaleString(undefined, {
-                      dateStyle: 'medium',
-                      timeStyle: 'short',
-                    })}
-                  </Text>
-                </View>
-
-                {/* Grid layout for parameters */}
-                <View style={styles.paramGrid}>
-                  {/* BP */}
-                  {item.systolic && item.diastolic && bp && (
-                    <View style={styles.paramBox}>
-                      <Text style={[styles.paramName, { color: theme.textSecondary, fontSize: 13 * fontScale }]}>BP</Text>
-                      <Text style={[styles.paramVal, { color: theme.text, fontSize: 16 * fontScale }]}>
-                        {item.systolic}/{item.diastolic}
-                        <Text style={{ fontSize: 10 }}> mmHg</Text>
-                      </Text>
-                      <VitalBadge status={bp.status} label={bp.text} />
-                    </View>
-                  )}
-
-                  {/* Sugar */}
-                  {(item.blood_sugar_fasting || item.blood_sugar_post_meal) && (
-                    <View style={styles.paramBox}>
-                      <Text style={[styles.paramName, { color: theme.textSecondary, fontSize: 13 * fontScale }]}>Sugar</Text>
-                      <Text style={[styles.paramVal, { color: theme.text, fontSize: 15 * fontScale }]}>
-                        {item.blood_sugar_fasting ? `Fasting: ${item.blood_sugar_fasting}` : ''}
-                        {item.blood_sugar_post_meal ? `Post: ${item.blood_sugar_post_meal}` : ''}
-                        <Text style={{ fontSize: 10 }}> mg/dL</Text>
-                      </Text>
-                      {sugar && <VitalBadge status={sugar.status} label={sugar.text} />}
-                    </View>
-                  )}
-
-                  {/* SpO2 */}
-                  {item.spo2 && oxygen && (
-                    <View style={styles.paramBox}>
-                      <Text style={[styles.paramName, { color: theme.textSecondary, fontSize: 13 * fontScale }]}>SpO2</Text>
-                      <Text style={[styles.paramVal, { color: theme.text, fontSize: 16 * fontScale }]}>
-                        {item.spo2}%
-                      </Text>
-                      <VitalBadge status={oxygen.status} label={oxygen.text} />
-                    </View>
-                  )}
-
-                  {/* Temp */}
-                  {item.temperature && temp && (
-                    <View style={styles.paramBox}>
-                      <Text style={[styles.paramName, { color: theme.textSecondary, fontSize: 13 * fontScale }]}>Temp</Text>
-                      <Text style={[styles.paramVal, { color: theme.text, fontSize: 16 * fontScale }]}>
-                        {item.temperature}°C
-                      </Text>
-                      <VitalBadge status={temp.status} label={temp.text} />
-                    </View>
-                  )}
-
-                  {/* HR */}
-                  {item.heart_rate && (
-                    <View style={styles.paramBox}>
-                      <Text style={[styles.paramName, { color: theme.textSecondary, fontSize: 13 * fontScale }]}>HR</Text>
-                      <Text style={[styles.paramVal, { color: theme.text, fontSize: 16 * fontScale }]}>
-                        {item.heart_rate} <Text style={{ fontSize: 10 }}>BPM</Text>
-                      </Text>
-                    </View>
-                  )}
-
-                  {/* Weight */}
-                  {item.weight && (
-                    <View style={styles.paramBox}>
-                      <Text style={[styles.paramName, { color: theme.textSecondary, fontSize: 13 * fontScale }]}>Weight</Text>
-                      <Text style={[styles.paramVal, { color: theme.text, fontSize: 16 * fontScale }]}>
-                        {item.weight} <Text style={{ fontSize: 10 }}>kg</Text>
-                      </Text>
-                    </View>
-                  )}
-                </View>
-              </Card>
-            );
-          })
-        )}
-      </ScrollView>
-
-      {/* Logging Modal Form */}
-      <Modal visible={modalVisible} animationType="slide" transparent={true}>
-        <View style={styles.modalOverlay}>
-          <View style={[styles.modalContent, { backgroundColor: theme.card, borderColor: theme.border, borderWidth: contrastMode === 'high' ? 2 : 0 }]}>
-            <Text style={[styles.modalTitle, { color: theme.text, fontSize: 20 * fontScale }]}>Log Today's Vitals</Text>
-
-            <ScrollView contentContainerStyle={styles.formScroll} keyboardShouldPersistTaps="handled">
-              <View style={styles.formRow}>
-                <Input
-                  label="Systolic BP (mmHg)"
-                  value={systolic}
-                  onChangeText={setSystolic}
-                  placeholder="e.g. 120"
-                  keyboardType="numeric"
-                  style={{ flex: 1, marginRight: 8 }}
-                />
-                <Input
-                  label="Diastolic BP (mmHg)"
-                  value={diastolic}
-                  onChangeText={setDiastolic}
-                  placeholder="e.g. 80"
-                  keyboardType="numeric"
-                  style={{ flex: 1 }}
-                />
-              </View>
-
-              <View style={styles.formRow}>
-                <Input
-                  label="Fasting Sugar (mg/dL)"
-                  value={sugarFasting}
-                  onChangeText={setSugarFasting}
-                  placeholder="e.g. 95"
-                  keyboardType="numeric"
-                  style={{ flex: 1, marginRight: 8 }}
-                />
-                <Input
-                  label="Post-Meal Sugar (mg/dL)"
-                  value={sugarPostMeal}
-                  onChangeText={setSugarPostMeal}
-                  placeholder="e.g. 140"
-                  keyboardType="numeric"
-                  style={{ flex: 1 }}
-                />
-              </View>
-
-              <View style={styles.formRow}>
-                <Input
-                  label="SpO2 (%)"
-                  value={spo2}
-                  onChangeText={setSpo2}
-                  placeholder="e.g. 98"
-                  keyboardType="numeric"
-                  style={{ flex: 1, marginRight: 8 }}
-                />
-                <Input
-                  label="Heart Rate (BPM)"
-                  value={heartRate}
-                  onChangeText={setHeartRate}
-                  placeholder="e.g. 72"
-                  keyboardType="numeric"
-                  style={{ flex: 1 }}
-                />
-              </View>
-
-              <View style={styles.formRow}>
-                <Input
-                  label="Temperature (°C)"
-                  value={temperature}
-                  onChangeText={setTemperature}
-                  placeholder="e.g. 36.6"
-                  keyboardType="numeric"
-                  style={{ flex: 1, marginRight: 8 }}
-                />
-                <Input
-                  label="Weight (kg)"
-                  value={weight}
-                  onChangeText={setWeight}
-                  placeholder="e.g. 78.4"
-                  keyboardType="numeric"
-                  style={{ flex: 1 }}
-                />
-              </View>
-
-              <View style={{ marginTop: 24 }}>
-                <Button title="Save Log Record" onPress={handleSaveVitals} variant="primary" />
-                <Button
-                  title="Cancel"
-                  onPress={() => setModalVisible(false)}
-                  variant="secondary"
-                  style={{ marginTop: 8 }}
-                />
-              </View>
-            </ScrollView>
-          </View>
+    <View style={{ flex: 1, backgroundColor: theme.background }}>
+      <BackgroundGrid />
+      <ScrollView style={[styles.container, { backgroundColor: 'transparent' }]}>
+        {/* Title Header with Add Button */}
+        <View style={styles.header}>
+          <Text style={[styles.title, { color: theme.text, fontSize: 22 * fontScale }]}>Vitals Log History</Text>
+          <TouchableOpacity
+            onPress={() => setModalVisible(true)}
+            style={[styles.addBtn, { backgroundColor: theme.primary, minHeight: 48, minWidth: 48, overflow: 'hidden' }]}
+          >
+            <ExpoLinearGradient
+              colors={themeMode === 'dark' ? ['#3B82F6', '#1E3A8A'] : ['#FF6B6B', '#EF4444', '#D92A2A']}
+              start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
+              style={StyleSheet.absoluteFill}
+            />
+            <Text style={[styles.addBtnText, { zIndex: 1 }]}>+ Log Vitals</Text>
+          </TouchableOpacity>
         </View>
-      </Modal>
+
+        {/* History scroll list */}
+        <View style={styles.scrollList}>
+          {vitalsList.length === 0 ? (
+            <View style={styles.emptyContainer}>
+              <Text style={{ fontSize: 40 }}>🩸</Text>
+              <Text style={{ color: theme.textSecondary, fontSize: 16 * fontScale, marginTop: 8 }}>
+                No vitals logged yet. Tap the button above to log your first record.
+              </Text>
+            </View>
+          ) : (
+            vitalsList.map((item) => {
+              const bp = getBpStatus(item.systolic, item.diastolic);
+              const sugar = getSugarStatus(item.blood_sugar_fasting);
+              const oxygen = getSpo2Status(item.spo2);
+              const temp = getTempStatus(item.temperature);
+
+              return (
+                <Card key={item.id} style={styles.vitalCard}>
+                  {/* Date Header */}
+                  <View style={styles.cardHeader}>
+                    <Text style={[styles.cardTime, { color: theme.textSecondary, fontSize: 14 * fontScale }]}>
+                      📅 {new Date(item.timestamp).toLocaleString(undefined, {
+                        dateStyle: 'medium',
+                        timeStyle: 'short',
+                      })}
+                    </Text>
+                  </View>
+
+                  {/* Grid layout for parameters */}
+                  <View style={styles.paramGrid}>
+                    {/* BP */}
+                    {item.systolic && item.diastolic && bp && (
+                      <View style={styles.paramBox}>
+                        <Text style={[styles.paramName, { color: theme.textSecondary, fontSize: 13 * fontScale }]}>BP</Text>
+                        <Text style={[styles.paramVal, { color: theme.text, fontSize: 16 * fontScale }]}>
+                          {item.systolic}/{item.diastolic}
+                          <Text style={{ fontSize: 10 }}> mmHg</Text>
+                        </Text>
+                        <VitalBadge status={bp.status} label={bp.text} />
+                      </View>
+                    )}
+
+                    {/* Sugar */}
+                    {(item.blood_sugar_fasting || item.blood_sugar_post_meal) && (
+                      <View style={styles.paramBox}>
+                        <Text style={[styles.paramName, { color: theme.textSecondary, fontSize: 13 * fontScale }]}>Sugar</Text>
+                        <Text style={[styles.paramVal, { color: theme.text, fontSize: 15 * fontScale }]}>
+                          {item.blood_sugar_fasting ? `Fasting: ${item.blood_sugar_fasting}` : ''}
+                          {item.blood_sugar_post_meal ? `Post: ${item.blood_sugar_post_meal}` : ''}
+                          <Text style={{ fontSize: 10 }}> mg/dL</Text>
+                        </Text>
+                        {sugar && <VitalBadge status={sugar.status} label={sugar.text} />}
+                      </View>
+                    )}
+
+                    {/* SpO2 */}
+                    {item.spo2 && oxygen && (
+                      <View style={styles.paramBox}>
+                        <Text style={[styles.paramName, { color: theme.textSecondary, fontSize: 13 * fontScale }]}>SpO2</Text>
+                        <Text style={[styles.paramVal, { color: theme.text, fontSize: 16 * fontScale }]}>
+                          {item.spo2}%
+                        </Text>
+                        <VitalBadge status={oxygen.status} label={oxygen.text} />
+                      </View>
+                    )}
+
+                    {/* Temp */}
+                    {item.temperature && temp && (
+                      <View style={styles.paramBox}>
+                        <Text style={[styles.paramName, { color: theme.textSecondary, fontSize: 13 * fontScale }]}>Temp</Text>
+                        <Text style={[styles.paramVal, { color: theme.text, fontSize: 16 * fontScale }]}>
+                          {item.temperature}°C
+                        </Text>
+                        <VitalBadge status={temp.status} label={temp.text} />
+                      </View>
+                    )}
+
+                    {/* HR */}
+                    {item.heart_rate && (
+                      <View style={styles.paramBox}>
+                        <Text style={[styles.paramName, { color: theme.textSecondary, fontSize: 13 * fontScale }]}>HR</Text>
+                        <Text style={[styles.paramVal, { color: theme.text, fontSize: 16 * fontScale }]}>
+                          {item.heart_rate} <Text style={{ fontSize: 10 }}>BPM</Text>
+                        </Text>
+                      </View>
+                    )}
+
+                    {/* Weight */}
+                    {item.weight && (
+                      <View style={styles.paramBox}>
+                        <Text style={[styles.paramName, { color: theme.textSecondary, fontSize: 13 * fontScale }]}>Weight</Text>
+                        <Text style={[styles.paramVal, { color: theme.text, fontSize: 16 * fontScale }]}>
+                          {item.weight} <Text style={{ fontSize: 10 }}>kg</Text>
+                        </Text>
+                      </View>
+                    )}
+                  </View>
+                </Card>
+              );
+            })
+          )}
+        </View>
+
+        {/* Logging Modal Form */}
+        <Modal visible={modalVisible} animationType="slide" transparent={true}>
+          <View style={styles.modalOverlay}>
+            <View style={[styles.modalContent, { backgroundColor: theme.card, borderColor: theme.border, borderWidth: contrastMode === 'high' ? 2 : 0 }]}>
+              <Text style={[styles.modalTitle, { color: theme.text, fontSize: 20 * fontScale }]}>Log Today's Vitals</Text>
+
+              <ScrollView contentContainerStyle={styles.formScroll} keyboardShouldPersistTaps="handled">
+                <View style={styles.formRow}>
+                  <Input
+                    label="Systolic BP (mmHg)"
+                    value={systolic}
+                    onChangeText={setSystolic}
+                    placeholder="e.g. 120"
+                    keyboardType="numeric"
+                    style={{ flex: 1, marginRight: 8 }}
+                  />
+                  <Input
+                    label="Diastolic BP (mmHg)"
+                    value={diastolic}
+                    onChangeText={setDiastolic}
+                    placeholder="e.g. 80"
+                    keyboardType="numeric"
+                    style={{ flex: 1 }}
+                  />
+                </View>
+
+                <View style={styles.formRow}>
+                  <Input
+                    label="Fasting Sugar (mg/dL)"
+                    value={sugarFasting}
+                    onChangeText={setSugarFasting}
+                    placeholder="e.g. 95"
+                    keyboardType="numeric"
+                    style={{ flex: 1, marginRight: 8 }}
+                  />
+                  <Input
+                    label="Post-Meal Sugar (mg/dL)"
+                    value={sugarPostMeal}
+                    onChangeText={setSugarPostMeal}
+                    placeholder="e.g. 140"
+                    keyboardType="numeric"
+                    style={{ flex: 1 }}
+                  />
+                </View>
+
+                <View style={styles.formRow}>
+                  <Input
+                    label="SpO2 (%)"
+                    value={spo2}
+                    onChangeText={setSpo2}
+                    placeholder="e.g. 98"
+                    keyboardType="numeric"
+                    style={{ flex: 1, marginRight: 8 }}
+                  />
+                  <Input
+                    label="Heart Rate (BPM)"
+                    value={heartRate}
+                    onChangeText={setHeartRate}
+                    placeholder="e.g. 72"
+                    keyboardType="numeric"
+                    style={{ flex: 1 }}
+                  />
+                </View>
+
+                <View style={styles.formRow}>
+                  <Input
+                    label="Temperature (°C)"
+                    value={temperature}
+                    onChangeText={setTemperature}
+                    placeholder="e.g. 36.6"
+                    keyboardType="numeric"
+                    style={{ flex: 1, marginRight: 8 }}
+                  />
+                  <Input
+                    label="Weight (kg)"
+                    value={weight}
+                    onChangeText={setWeight}
+                    placeholder="e.g. 78.4"
+                    keyboardType="numeric"
+                    style={{ flex: 1 }}
+                  />
+                </View>
+
+                <View style={{ marginTop: 24 }}>
+                  <Button title="Save Log Record" onPress={handleSaveVitals} variant="primary" />
+                  <Button
+                    title="Cancel"
+                    onPress={() => setModalVisible(false)}
+                    variant="secondary"
+                    style={{ marginTop: 8 }}
+                  />
+                </View>
+              </ScrollView>
+            </View>
+          </View>
+        </Modal>
+      </ScrollView>
     </View>
   );
 };
@@ -401,7 +411,7 @@ const styles = StyleSheet.create({
   },
   scrollList: {
     padding: 16,
-    paddingBottom: 40,
+    paddingBottom: 120,
   },
   emptyContainer: {
     alignItems: 'center',

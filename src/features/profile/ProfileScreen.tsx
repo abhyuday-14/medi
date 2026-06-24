@@ -6,6 +6,7 @@ import { getMedicalProfile, updateMedicalProfile, getEmergencyContact, saveEmerg
 import { Card } from '../../components/Card';
 import { Input } from '../../components/Input';
 import { Button } from '../../components/Button';
+import { BackgroundGrid } from '../../components/BackgroundGrid';
 
 type ProfileSection = 'personal' | 'medical' | 'emergency';
 
@@ -279,7 +280,9 @@ export const ProfileScreen: React.FC = () => {
   };
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: theme.background }]}>
+    <View style={{ flex: 1, backgroundColor: theme.background }}>
+      <BackgroundGrid />
+      <ScrollView style={[styles.container, { backgroundColor: 'transparent' }]} contentContainerStyle={{ paddingBottom: 120 }}>
       {/* Header Profile Area */}
       <View style={[styles.profileHeader, { backgroundColor: theme.card, borderBottomColor: theme.border }]}>
         <View style={styles.avatarCircle}>
@@ -359,6 +362,7 @@ export const ProfileScreen: React.FC = () => {
         )}
       </View>
     </ScrollView>
+    </View>
   );
 };
 
