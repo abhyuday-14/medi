@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Share, ActivityIndicator, Platform } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Share, ActivityIndicator, Platform, RefreshControl } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
 import { useAppStore } from '../../store/appStore';
 import { COLORS, getFontScale } from '../../config/theme';
@@ -21,7 +21,8 @@ import { Card } from '../../components/Card';
 import { Button } from '../../components/Button';
 import { VitalBadge, VitalStatus } from '../../components/VitalBadge';
 import { HeartPulse, Pill, Thermometer, FileText, Bell, PhoneCall } from 'lucide-react-native';
-import Svg, { Circle, G } from 'react-native-svg';
+import Svg, { Circle, G, Defs, Pattern, Rect, LinearGradient as SvgLinearGradient, Stop, RadialGradient, Path } from 'react-native-svg';
+import { LinearGradient as ExpoLinearGradient } from 'expo-linear-gradient';
 
 interface DashboardScreenProps {
   navigation: any;
@@ -231,7 +232,34 @@ Please contact me immediately.`;
   const spo2Details = lastVital ? getSpo2Status(lastVital.spo2) : null;
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: theme.background }]}>
+    <View style={{ flex: 1, backgroundColor: theme.background }}>
+      {/* Dynamic Fading Grid Background */}
+      <View style={[StyleSheet.absoluteFill, { overflow: 'hidden' }]} pointerEvents="none">
+        <Svg width="100%" height="100%" style={{ position: 'absolute', top: 0, left: 0 }}>
+          <Defs>
+            <Pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+              <Path d="M 40 0 L 0 0 0 40" fill="none" stroke={theme.text} strokeWidth="0.5" strokeOpacity="0.08" />
+            </Pattern>
+            <SvgLinearGradient id="fade" x1="0" y1="0" x2="0" y2="1">
+              <Stop offset="0" stopColor={theme.background} stopOpacity="0" />
+              <Stop offset="0.6" stopColor={theme.background} stopOpacity="0.8" />
+              <Stop offset="1" stopColor={theme.background} stopOpacity="1" />
+            </SvgLinearGradient>
+            <RadialGradient id="glow" cx="50%" cy="0%" r="70%">
+              <Stop offset="0" stopColor={theme.primary} stopOpacity="0.15" />
+              <Stop offset="1" stopColor={theme.background} stopOpacity="0" />
+            </RadialGradient>
+          </Defs>
+          <Rect width="100%" height="100%" fill="url(#grid)" />
+          <Rect width="100%" height="100%" fill="url(#glow)" />
+          <Rect width="100%" height="100%" fill="url(#fade)" />
+        </Svg>
+      </View>
+
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={[styles.container, { backgroundColor: 'transparent' }]}
+      >
       {/* Top Welcome Bar */}
       <View style={styles.headerBar}>
         <View>
@@ -254,7 +282,22 @@ Please contact me immediately.`;
       </View>
 
       {/* Health Score Summary Gauge */}
-      <Card style={[styles.scoreHeroCard, { backgroundColor: theme.primary, borderColor: theme.primary }]}>
+      <ExpoLinearGradient
+          colors={
+            themeMode === 'dark' 
+              ? ['#3B82F6', '#1E3A8A'] 
+              : ['#FF6B6B', '#EF4444', '#D92A2A']
+          }
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={[
+            styles.scoreHeroCard,
+            {
+              borderColor: contrastMode === 'high' ? '#FFFFFF' : theme.primary,
+              borderWidth: contrastMode === 'high' ? 3 : 0,
+            },
+          ]}
+        >
         <View style={[styles.scoreRow, { justifyContent: 'space-between', alignItems: 'flex-start' }]}>
           <View style={{ flex: 1, paddingRight: 16 }}>
             <Text style={styles.scoreHeadline}>Daily Score</Text>
@@ -289,7 +332,7 @@ Please contact me immediately.`;
             </View>
           </View>
         </View>
-      </Card>
+      </ExpoLinearGradient>
 
       {/* Quick Action Grid */}
       <Text style={[styles.sectionTitle, { color: theme.text, fontSize: 16 * fontScale, marginTop: 24 }]}>Quick Actions</Text>
@@ -352,29 +395,39 @@ Please contact me immediately.`;
       </View>
 
       {/* EMERGENCY SOS BUTTON */}
-      <TouchableOpacity
-        activeOpacity={0.8}
-        onPress={handleSOS}
-        disabled={sosLoading}
-        style={[
-          styles.sosButton,
-          {
-            backgroundColor: theme.danger,
-            shadowColor: theme.danger,
-          },
-        ]}
-      >
-        {sosLoading ? (
-          <ActivityIndicator color="#FFFFFF" />
-        ) : (
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-            <View style={{ backgroundColor: 'rgba(255,255,255,0.25)', padding: 6, borderRadius: 20, marginRight: 12 }}>
-              <PhoneCall color="#FFFFFF" size={20} strokeWidth={2.5} />
-            </View>
-            <Text style={[styles.sosButtonText, { fontSize: 18 * fontScale, letterSpacing: 1 }]}>EMERGENCY SOS</Text>
-          </View>
-        )}
-      </TouchableOpacity>
+      <View style={{ marginTop: 4, width: '100%', shadowColor: theme.danger, shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.4, shadowRadius: 16, elevation: 12 }}>
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onPress={handleSOS}
+          disabled={sosLoading}
+          style={{ width: '100%', borderRadius: 28, overflow: 'hidden' }}
+        >
+          <ExpoLinearGradient
+            colors={
+              themeMode === 'dark'
+                ? ['#F87171', '#991B1B']
+                : ['#FF4D4D', '#CC0000']
+            }
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={[
+              styles.sosButton,
+              { marginTop: 0, shadowColor: 'transparent', elevation: 0 }
+            ]}
+          >
+            {sosLoading ? (
+              <ActivityIndicator color="#FFFFFF" />
+            ) : (
+              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                <View style={{ backgroundColor: 'rgba(255,255,255,0.25)', padding: 6, borderRadius: 20, marginRight: 12 }}>
+                  <PhoneCall color="#FFFFFF" size={20} strokeWidth={2.5} />
+                </View>
+                <Text style={[styles.sosButtonText, { fontSize: 18 * fontScale, letterSpacing: 1 }]}>EMERGENCY SOS</Text>
+              </View>
+            )}
+          </ExpoLinearGradient>
+        </TouchableOpacity>
+      </View>
 
       {/* Today's Medicines Checklist */}
       <Text style={[styles.sectionTitle, { color: theme.text, fontSize: 16 * fontScale }]}>Today's Medicines</Text>
@@ -557,6 +610,7 @@ Please contact me immediately.`;
         )}
       </Card>
     </ScrollView>
+    </View>
   );
 };
 
