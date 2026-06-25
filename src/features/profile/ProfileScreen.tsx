@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Alert, TouchableOpacity, Platform } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAppStore } from '../../store/appStore';
 import { COLORS, getFontScale } from '../../config/theme';
 import { getMedicalProfile, updateMedicalProfile, getEmergencyContact, saveEmergencyContact, MedicalProfileDB } from '../../database/dbHelpers';
@@ -15,6 +16,7 @@ export const ProfileScreen: React.FC = () => {
   const { themeMode, contrastMode, fontSizeScale, user, logout } = useAppStore();
   const theme = COLORS[themeMode][contrastMode];
   const fontScale = getFontScale(fontSizeScale);
+  const insets = useSafeAreaInsets();
 
   const [activeSection, setActiveSection] = useState<ProfileSection>('personal');
   const [isEditing, setIsEditing] = useState(false);
@@ -317,7 +319,7 @@ export const ProfileScreen: React.FC = () => {
       <BackgroundGrid />
       <ScrollView style={[styles.container, { backgroundColor: 'transparent' }]} contentContainerStyle={{ paddingBottom: 120 }}>
       {/* Header Profile Area */}
-      <View style={[styles.profileHeader, { backgroundColor: theme.card, borderBottomColor: theme.border }]}>
+      <View style={[styles.profileHeader, { backgroundColor: theme.card, borderBottomColor: theme.border, paddingTop: Math.max(insets.top + 16, 24) }]}>
         <View style={styles.avatarCircle}>
           <Text style={{ fontSize: 32, color: theme.primary }}>👤</Text>
         </View>

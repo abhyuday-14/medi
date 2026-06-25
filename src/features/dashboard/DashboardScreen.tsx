@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Share, ActivityIndicator, Platform, RefreshControl } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAppStore } from '../../store/appStore';
 import { COLORS, getFontScale } from '../../config/theme';
 import {
@@ -35,6 +36,7 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({ navigation }) 
   const { themeMode, contrastMode, fontSizeScale, user, notifications, setIsLocked } = useAppStore();
   const theme = COLORS[themeMode][contrastMode];
   const fontScale = getFontScale(fontSizeScale);
+  const insets = useSafeAreaInsets();
 
   const [loading, setLoading] = useState(true);
   const [lastVital, setLastVital] = useState<VitalDB | null>(null);
@@ -239,7 +241,7 @@ Please contact me immediately.`;
 
       <ScrollView
         style={{ flex: 1 }}
-        contentContainerStyle={[styles.container, { backgroundColor: 'transparent' }]}
+        contentContainerStyle={[styles.container, { backgroundColor: 'transparent', paddingTop: Math.max(insets.top + 16, Platform.OS === 'ios' ? 64 : 40) }]}
       >
       {/* Top Welcome Bar */}
       <View style={styles.headerBar}>

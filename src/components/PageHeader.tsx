@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { IconContainer } from './IconContainer';
 import { COLORS, getFontScale } from '../config/theme';
 import { useAppStore } from '../store/appStore';
@@ -14,9 +15,10 @@ export const PageHeader: React.FC<PageHeaderProps> = ({ title, icon, rightElemen
   const { fontSizeScale, themeMode, contrastMode } = useAppStore();
   const fontScale = getFontScale(fontSizeScale);
   const theme = COLORS[themeMode][contrastMode];
+  const insets = useSafeAreaInsets();
 
   return (
-    <View style={styles.header}>
+    <View style={[styles.header, { paddingTop: Math.max(insets.top + 8, 16) }]}>
       <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
         <IconContainer size={40} backgroundColor="#2563EB">
           {icon}

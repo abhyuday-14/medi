@@ -4,6 +4,7 @@ import { View, ActivityIndicator, StyleSheet, Text, Platform } from 'react-nativ
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BlurView } from 'expo-blur';
 import { Home, Activity, Pill, Thermometer, FileText, UserIcon } from 'lucide-react-native';
 
@@ -40,6 +41,7 @@ function TabNavigator() {
   const { themeMode, contrastMode, fontSizeScale } = useAppStore();
   const theme = COLORS[themeMode][contrastMode];
   const fontScale = getFontScale(fontSizeScale);
+  const insets = useSafeAreaInsets();
 
   return (
     <Tab.Navigator
@@ -55,6 +57,7 @@ function TabNavigator() {
           fontWeight: '900',
           fontSize: 18 * fontScale,
         },
+        tabBarLabelPosition: 'below-icon',
         tabBarStyle: {
           position: 'absolute',
           backgroundColor: themeMode === 'dark' ? 'rgba(15, 23, 42, 0.7)' : 'rgba(255, 255, 255, 0.7)',
@@ -69,7 +72,7 @@ function TabNavigator() {
           paddingTop: 8,
           borderRadius: 32,
           marginHorizontal: 16,
-          marginBottom: Platform.OS === 'ios' ? 24 : 16,
+          marginBottom: Platform.OS === 'ios' ? 24 : 16 + Math.max(0, insets.bottom - 8),
           overflow: 'hidden',
         },
         tabBarBackground: () => (
@@ -255,8 +258,9 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer>
-      <StatusBar style={themeMode === 'dark' ? 'light' : 'dark'} />
+    <SafeAreaProvider>
+      <NavigationContainer>
+        <StatusBar style={themeMode === 'dark' ? 'light' : 'dark'} />
       <Stack.Navigator
         screenOptions={{
           headerStyle: {
@@ -322,5 +326,6 @@ export default function App() {
         )}
       </Stack.Navigator>
     </NavigationContainer>
+    </SafeAreaProvider>
   );
 }
