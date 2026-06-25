@@ -6,6 +6,9 @@ import { updateBiometricsSetting, checkUserExists, getMedicalProfile, getVitalsH
 import { Card } from '../../components/Card';
 import { Button } from '../../components/Button';
 import { Input } from '../../components/Input';
+import { PageHeader } from '../../components/PageHeader';
+import { IconContainer } from '../../components/IconContainer';
+import { Settings, Moon, Contrast, Fingerprint, Lock, Download, Upload, Trash2 } from 'lucide-react-native';
 
 export const SettingsScreen: React.FC = () => {
   const {
@@ -145,115 +148,144 @@ export const SettingsScreen: React.FC = () => {
 
   return (
     <ScrollView style={[styles.container, { backgroundColor: theme.background }]}>
-      <Text style={[styles.title, { color: theme.text, fontSize: 22 * fontScale }]}>Application Settings</Text>
-
-      {/* Accessibility Preferences Card */}
-      <Text style={[styles.sectionTitle, { color: theme.text, fontSize: 16 * fontScale }]}>Accessibility & Visuals</Text>
-      <Card>
-        {/* Dark Mode toggle */}
-        <View style={styles.settingRow}>
-          <Text style={[styles.settingLabel, { color: theme.text, fontSize: 16 * fontScale }]}>Dark Theme</Text>
-          <Switch
-            value={themeMode === 'dark'}
-            onValueChange={(val) => setThemeMode(val ? 'dark' : 'light')}
-            trackColor={{ true: theme.primary }}
-          />
-        </View>
-
-        <View style={styles.divider} />
-
-        {/* High Contrast Mode toggle */}
-        <View style={styles.settingRow}>
-          <View style={{ flex: 1, marginRight: 8 }}>
-            <Text style={[styles.settingLabel, { color: theme.text, fontSize: 16 * fontScale }]}>High Contrast Mode</Text>
-            <Text style={{ color: theme.textSecondary, fontSize: 12 }}>Enhance visual borders and color saturation</Text>
+      <PageHeader title="Settings" icon={<Settings size={22} color="#FFFFFF" />} />
+      
+      <View style={{ paddingHorizontal: 16 }}>
+        {/* Accessibility Preferences Card */}
+        <Text style={[styles.sectionTitle, { color: theme.text, fontSize: 16 * fontScale }]}>Accessibility & Visuals</Text>
+        <Card>
+          {/* Dark Mode toggle */}
+          <View style={styles.settingRow}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
+              <IconContainer size={36} backgroundColor="#EFF6FF">
+                <Moon size={18} color="#2563EB" />
+              </IconContainer>
+              <Text style={[styles.settingLabelText, { color: theme.text, fontSize: 16 * fontScale }]}>Dark Theme</Text>
+            </View>
+            <Switch
+              value={themeMode === 'dark'}
+              onValueChange={(val) => setThemeMode(val ? 'dark' : 'light')}
+              trackColor={{ true: theme.primary }}
+            />
           </View>
-          <Switch
-            value={contrastMode === 'high'}
-            onValueChange={(val) => setContrastMode(val ? 'high' : 'normal')}
-            trackColor={{ true: theme.primary }}
-          />
-        </View>
 
-        <View style={styles.divider} />
+          <View style={styles.divider} />
 
-        {/* Text Scaling Selection */}
-        <Text style={[styles.settingLabel, { color: theme.text, fontSize: 16 * fontScale, marginBottom: 8 }]}>
-          Senior Font Size Scale
-        </Text>
-        <View style={styles.sizeBtnRow}>
-          {(['normal', 'large', 'extra-large'] as typeof fontSizeScale[]).map((scale) => (
-            <TouchableOpacity
-              key={scale}
-              onPress={() => setFontSizeScale(scale)}
-              style={[
-                styles.sizeBtn,
-                {
-                  backgroundColor: fontSizeScale === scale ? theme.primary : theme.background,
-                  borderColor: theme.border,
-                  borderWidth: 1,
-                },
-              ]}
-            >
-              <Text
-                style={{
-                  color: fontSizeScale === scale ? '#FFFFFF' : theme.text,
-                  fontWeight: 'bold',
-                  fontSize: (scale === 'normal' ? 13 : scale === 'large' ? 15 : 17) * fontScale,
-                }}
+          {/* High Contrast Mode toggle */}
+          <View style={styles.settingRow}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1, marginRight: 8 }}>
+              <IconContainer size={36} backgroundColor="#EFF6FF">
+                <Contrast size={18} color="#2563EB" />
+              </IconContainer>
+              <View style={{ marginLeft: 12, flex: 1 }}>
+                <Text style={[styles.settingLabel, { color: theme.text, fontSize: 16 * fontScale }]}>High Contrast Mode</Text>
+                <Text style={{ color: theme.textSecondary, fontSize: 12 }}>Enhance visual borders and color saturation</Text>
+              </View>
+            </View>
+            <Switch
+              value={contrastMode === 'high'}
+              onValueChange={(val) => setContrastMode(val ? 'high' : 'normal')}
+              trackColor={{ true: theme.primary }}
+            />
+          </View>
+
+          <View style={styles.divider} />
+
+          {/* Text Scaling Selection */}
+          <Text style={[styles.settingLabel, { color: theme.text, fontSize: 16 * fontScale, marginBottom: 8, marginTop: 4 }]}>
+            Senior Font Size Scale
+          </Text>
+          <View style={styles.sizeBtnRow}>
+            {(['normal', 'large', 'extra-large'] as typeof fontSizeScale[]).map((scale) => (
+              <TouchableOpacity
+                key={scale}
+                onPress={() => setFontSizeScale(scale)}
+                style={[
+                  styles.sizeBtn,
+                  {
+                    backgroundColor: fontSizeScale === scale ? theme.primary : theme.background,
+                    borderColor: theme.border,
+                    borderWidth: 1,
+                  },
+                ]}
               >
-                {scale === 'normal' ? 'Normal' : scale === 'large' ? 'Large' : 'Extra Large'}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      </Card>
-
-      {/* Security settings */}
-      <Text style={[styles.sectionTitle, { color: theme.text, fontSize: 16 * fontScale }]}>Security & Privacy</Text>
-      <Card>
-        <View style={styles.settingRow}>
-          <View style={{ flex: 1, marginRight: 8 }}>
-            <Text style={[styles.settingLabel, { color: theme.text, fontSize: 16 * fontScale }]}>Biometric Lock</Text>
-            <Text style={{ color: theme.textSecondary, fontSize: 12 }}>Use Face ID or Fingerprint to unlock</Text>
+                <Text
+                  style={{
+                    color: fontSizeScale === scale ? '#FFFFFF' : theme.text,
+                    fontWeight: 'bold',
+                    fontSize: (scale === 'normal' ? 13 : scale === 'large' ? 15 : 17) * fontScale,
+                  }}
+                >
+                  {scale === 'normal' ? 'Normal' : scale === 'large' ? 'Large' : 'Extra Large'}
+                </Text>
+              </TouchableOpacity>
+            ))}
           </View>
-          <Switch
-            value={biometricsEnabled}
-            onValueChange={handleToggleBiometrics}
-            trackColor={{ true: theme.primary }}
-          />
-        </View>
+        </Card>
 
-        <View style={styles.divider} />
+        {/* Security settings */}
+        <Text style={[styles.sectionTitle, { color: theme.text, fontSize: 16 * fontScale }]}>Security & Privacy</Text>
+        <Card>
+          <View style={styles.settingRow}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1, marginRight: 8 }}>
+              <IconContainer size={36} backgroundColor="#EFF6FF">
+                <Fingerprint size={18} color="#2563EB" />
+              </IconContainer>
+              <View style={{ marginLeft: 12, flex: 1 }}>
+                <Text style={[styles.settingLabel, { color: theme.text, fontSize: 16 * fontScale }]}>Biometric Lock</Text>
+                <Text style={{ color: theme.textSecondary, fontSize: 12 }}>Use Face ID or Fingerprint to unlock</Text>
+              </View>
+            </View>
+            <Switch
+              value={biometricsEnabled}
+              onValueChange={handleToggleBiometrics}
+              trackColor={{ true: theme.primary }}
+            />
+          </View>
 
-        <TouchableOpacity onPress={() => setPinModalVisible(true)} style={styles.clickableSetting}>
-          <Text style={[styles.settingLabel, { color: theme.primary, fontSize: 16 * fontScale, fontWeight: 'bold' }]}>
-            Change 4-Digit Security PIN
-          </Text>
-        </TouchableOpacity>
-      </Card>
+          <View style={styles.divider} />
 
-      {/* Data Management settings */}
-      <Text style={[styles.sectionTitle, { color: theme.text, fontSize: 16 * fontScale }]}>Data Utilities</Text>
-      <Card style={{ marginBottom: 40 }}>
-        <TouchableOpacity onPress={handleExportData} style={styles.clickableSetting}>
-          <Text style={[styles.settingLabel, { color: theme.text, fontSize: 16 * fontScale }]}>📤 Export Clinical Logs (JSON Backup)</Text>
-        </TouchableOpacity>
+          <TouchableOpacity onPress={() => setPinModalVisible(true)} style={styles.settingRowItem}>
+            <IconContainer size={36} backgroundColor="#EFF6FF">
+              <Lock size={18} color="#2563EB" />
+            </IconContainer>
+            <Text style={[styles.settingLabelText, { color: theme.primary, fontSize: 16 * fontScale, fontWeight: 'bold' }]}>
+              Change 4-Digit Security PIN
+            </Text>
+          </TouchableOpacity>
+        </Card>
 
-        <View style={styles.divider} />
+        {/* Data Management settings */}
+        <Text style={[styles.sectionTitle, { color: theme.text, fontSize: 16 * fontScale }]}>Data Utilities</Text>
+        <Card style={{ marginBottom: 40 }}>
+          <TouchableOpacity onPress={handleExportData} style={styles.settingRowItem}>
+            <IconContainer size={36} backgroundColor="#EFF6FF">
+              <Download size={18} color="#2563EB" />
+            </IconContainer>
+            <Text style={[styles.settingLabelText, { color: theme.text, fontSize: 16 * fontScale }]}>Export Clinical Logs (JSON Backup)</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity onPress={handleImportData} style={styles.clickableSetting}>
-          <Text style={[styles.settingLabel, { color: theme.text, fontSize: 16 * fontScale }]}>📥 Import Data / Restore Backup</Text>
-        </TouchableOpacity>
+          <View style={styles.divider} />
 
-        <View style={styles.divider} />
+          <TouchableOpacity onPress={handleImportData} style={styles.settingRowItem}>
+            <IconContainer size={36} backgroundColor="#EFF6FF">
+              <Upload size={18} color="#2563EB" />
+            </IconContainer>
+            <Text style={[styles.settingLabelText, { color: theme.text, fontSize: 16 * fontScale }]}>Import Data / Restore Backup</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity onPress={handleResetDemoData} style={styles.clickableSetting}>
-          <Text style={[styles.settingLabel, { color: theme.danger, fontSize: 16 * fontScale, fontWeight: 'bold' }]}>
-            💥 Reset Database & Re-seed Demo Data
-          </Text>
-        </TouchableOpacity>
-      </Card>
+          <View style={styles.divider} />
+
+          <TouchableOpacity onPress={handleResetDemoData} style={styles.settingRowItem}>
+            <IconContainer size={36} backgroundColor="#FEE2E2">
+              <Trash2 size={18} color="#EF4444" />
+            </IconContainer>
+            <Text style={[styles.settingLabelText, { color: theme.danger, fontSize: 16 * fontScale, fontWeight: 'bold' }]}>
+              Reset Database & Re-seed Demo Data
+            </Text>
+          </TouchableOpacity>
+        </Card>
+      </View>
 
       {/* PIN Change Modal */}
       <Modal visible={pinModalVisible} animationType="slide" transparent={true}>
@@ -307,7 +339,6 @@ export const SettingsScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
   },
   title: {
     fontWeight: 'bold',
@@ -325,7 +356,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 12,
   },
+  settingRowItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+  },
   settingLabel: {
+    fontWeight: '600',
+  },
+  settingLabelText: {
+    marginLeft: 12,
     fontWeight: '600',
   },
   divider: {

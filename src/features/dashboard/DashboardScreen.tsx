@@ -24,6 +24,7 @@ import { HeartPulse, Pill, Thermometer, FileText, Bell, PhoneCall } from 'lucide
 import Svg, { Circle, G } from 'react-native-svg';
 import { LinearGradient as ExpoLinearGradient } from 'expo-linear-gradient';
 import { BackgroundGrid } from '../../components/BackgroundGrid';
+import { CircularProgress } from '../../components/CircularProgress';
 
 interface DashboardScreenProps {
   navigation: any;
@@ -266,7 +267,7 @@ Please contact me immediately.`;
           colors={
             themeMode === 'dark' 
               ? ['#3B82F6', '#1E3A8A'] 
-              : ['#FF6B6B', '#EF4444', '#D92A2A']
+              : ['#60A5FA', '#3B82F6', '#2563EB']
           }
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
@@ -292,25 +293,14 @@ Please contact me immediately.`;
               <Text style={styles.adherenceLabel}>Adherence: {adherence.toFixed(0)}%</Text>
             </View>
           </View>
-          <View style={styles.circularProgressContainer}>
-            <Svg width="80" height="80" viewBox="0 0 100 100" style={{ transform: [{ rotate: '-90deg' }] }}>
-              <Circle cx="50" cy="50" r="40" stroke="rgba(255,255,255,0.2)" strokeWidth="10" fill="none" />
-              <Circle
-                cx="50"
-                cy="50"
-                r="40"
-                stroke="#FFFFFF"
-                strokeWidth="10"
-                fill="none"
-                strokeDasharray={`${2 * Math.PI * 40}`}
-                strokeDashoffset={`${2 * Math.PI * 40 * (1 - healthScore / 100)}`}
-                strokeLinecap="round"
-              />
-            </Svg>
-            <View style={styles.circularProgressTextContainer}>
-              <Text style={styles.circularProgressText}>{healthScore}%</Text>
-            </View>
-          </View>
+            <CircularProgress
+              size={76}
+              strokeWidth={8}
+              progress={healthScore}
+              color="#FFFFFF"
+              backgroundColor="rgba(255, 255, 255, 0.25)"
+              textColor="#FFFFFF"
+            />
         </View>
       </ExpoLinearGradient>
 
@@ -661,24 +651,7 @@ const styles = StyleSheet.create({
   },
   scoreRow: {
     flexDirection: 'row',
-  },
-  circularProgressContainer: {
-    position: 'relative',
-    width: 80,
-    height: 80,
-    justifyContent: 'center',
     alignItems: 'center',
-  },
-  circularProgressTextContainer: {
-    position: 'absolute',
-    top: 0, left: 0, right: 0, bottom: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  circularProgressText: {
-    color: '#FFFFFF',
-    fontWeight: '900',
-    fontSize: 22,
   },
   scoreHeadline: {
     color: '#FFFFFF',

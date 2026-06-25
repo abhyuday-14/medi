@@ -430,7 +430,7 @@ export const MedicinesScreen: React.FC = () => {
             activeOpacity={0.85}
           >
             <ExpoLinearGradient
-              colors={themeMode === 'dark' ? ['#3B82F6', '#1E3A8A'] : ['#FF6B6B', '#EF4444', '#D92A2A']}
+              colors={themeMode === 'dark' ? ['#3B82F6', '#1E3A8A'] : ['#60A5FA', '#3B82F6', '#2563EB']}
               start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
               style={StyleSheet.absoluteFill}
             />
@@ -490,7 +490,7 @@ export const MedicinesScreen: React.FC = () => {
           activeOpacity={0.85}
         >
           <ExpoLinearGradient
-            colors={themeMode === 'dark' ? ['#3B82F6', '#1E3A8A'] : ['#FF6B6B', '#EF4444', '#D92A2A']}
+            colors={themeMode === 'dark' ? ['#3B82F6', '#1E3A8A'] : ['#60A5FA', '#3B82F6', '#2563EB']}
             start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
             style={StyleSheet.absoluteFill}
           />

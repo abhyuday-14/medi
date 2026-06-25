@@ -17,6 +17,9 @@ import { saveFileLocally, deleteLocalFile } from '../../services/fileService';
 import { Card } from '../../components/Card';
 import { Input } from '../../components/Input';
 import { Button } from '../../components/Button';
+import { PageHeader } from '../../components/PageHeader';
+import { IconContainer } from '../../components/IconContainer';
+import { Folder, FolderOpen, FileText, Image as ImageIcon, Calendar, Pencil, Share2, Eye, Trash2 } from 'lucide-react-native';
 
 export const PrescriptionsScreen: React.FC = () => {
   const isFocused = useIsFocused();
@@ -200,18 +203,24 @@ export const PrescriptionsScreen: React.FC = () => {
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       {/* Header */}
-      <View style={styles.header}>
-        <Text style={[styles.title, { color: theme.text, fontSize: 22 * fontScale }]}>Prescription Cabinet</Text>
-        <TouchableOpacity
-          onPress={() => setUploadModalVisible(true)}
-          style={[styles.addBtn, { backgroundColor: theme.primary, minHeight: 48, minWidth: 48 }]}
-        >
-          <Text style={styles.addBtnText}>+ Add File</Text>
-        </TouchableOpacity>
+      <View style={styles.headerRow}>
+        <PageHeader
+          title="Prescription Cabinet"
+          icon={<FolderOpen color="#FFFFFF" size={20} />}
+          rightElement={
+            <TouchableOpacity
+              onPress={() => setUploadModalVisible(true)}
+              style={[styles.addBtn, { backgroundColor: theme.primary }]}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.addBtnText}>+ Add File</Text>
+            </TouchableOpacity>
+          }
+        />
       </View>
 
       {/* Horizontal Folders Navigator */}
-      <View>
+      <View style={{ marginBottom: 4 }}>
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={styles.folderList}>
           {folders.map((folder) => (
             <TouchableOpacity
@@ -223,9 +232,12 @@ export const PrescriptionsScreen: React.FC = () => {
                   backgroundColor: activeFolder === folder ? theme.primary : theme.card,
                   borderColor: theme.border,
                   borderWidth: 1,
+                  flexDirection: 'row',
+                  alignItems: 'center',
                 },
               ]}
             >
+              <Folder size={14} color={activeFolder === folder ? '#FFFFFF' : theme.text} style={{ marginRight: 6 }} />
               <Text
                 style={{
                   color: activeFolder === folder ? '#FFFFFF' : theme.text,
@@ -233,7 +245,7 @@ export const PrescriptionsScreen: React.FC = () => {
                   fontSize: 14 * fontScale,
                 }}
               >
-                📁 {folder}
+                {folder}
               </Text>
             </TouchableOpacity>
           ))}
@@ -244,8 +256,10 @@ export const PrescriptionsScreen: React.FC = () => {
       <ScrollView contentContainerStyle={styles.scrollList}>
         {filteredList.length === 0 ? (
           <View style={styles.emptyContainer}>
-            <Text style={{ fontSize: 40 }}>📁</Text>
-            <Text style={{ color: theme.textSecondary, fontSize: 16 * fontScale, marginTop: 8, textAlign: 'center' }}>
+            <IconContainer size={64} backgroundColor="#EFF6FF">
+              <FolderOpen size={32} color="#2563EB" />
+            </IconContainer>
+            <Text style={{ color: theme.textSecondary, fontSize: 16 * fontScale, marginTop: 16, textAlign: 'center' }}>
               No prescription documents inside this cabinet category.
             </Text>
           </View>
@@ -254,14 +268,23 @@ export const PrescriptionsScreen: React.FC = () => {
             <Card key={presc.id} style={styles.prescCard}>
               <View style={styles.prescHeader}>
                 <View style={styles.prescMeta}>
-                  <Text style={{ fontSize: 28 }}>{presc.file_type === 'PDF' ? '📄' : '🖼️'}</Text>
+                  <IconContainer size={40} backgroundColor="#EFF6FF">
+                    {presc.file_type === 'PDF' ? (
+                      <FileText size={22} color="#2563EB" />
+                    ) : (
+                      <ImageIcon size={22} color="#2563EB" />
+                    )}
+                  </IconContainer>
                   <View style={{ marginLeft: 12, flex: 1 }}>
                     <Text style={[styles.fileName, { color: theme.text, fontSize: 15 * fontScale }]} numberOfLines={1}>
                       {presc.file_name}
                     </Text>
-                    <Text style={[styles.fileTag, { color: theme.textSecondary, fontSize: 13 * fontScale }]}>
-                      Doctor: {presc.doctor_tag || 'General'} | 📅 {presc.visit_date_tag}
-                    </Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 2 }}>
+                      <Calendar size={13} color={theme.textSecondary} />
+                      <Text style={[styles.fileTag, { color: theme.textSecondary, fontSize: 13 * fontScale, marginLeft: 4, marginTop: 0 }]}>
+                        Doctor: {presc.doctor_tag || 'General'} | Date: {presc.visit_date_tag}
+                      </Text>
+                    </View>
                   </View>
                 </View>
 
@@ -273,13 +296,18 @@ export const PrescriptionsScreen: React.FC = () => {
                       setNewFileName(presc.file_name);
                       setRenameModalVisible(true);
                     }}
-                    style={styles.actionIcon}
+                    style={[styles.actionIconBtn, { backgroundColor: '#EFF6FF' }]}
+                    accessibilityLabel="Rename file"
                   >
-                    <Text style={{ fontSize: 15, color: theme.primary }}>✏️ Rename</Text>
+                    <Pencil size={15} color="#2563EB" />
                   </TouchableOpacity>
 
-                  <TouchableOpacity onPress={() => handleShare(presc)} style={[styles.actionIcon, { marginLeft: 12 }]}>
-                    <Text style={{ fontSize: 15, color: theme.primary }}>📤 Share</Text>
+                  <TouchableOpacity
+                    onPress={() => handleShare(presc)}
+                    style={[styles.actionIconBtn, { backgroundColor: '#EFF6FF', marginLeft: 8 }]}
+                    accessibilityLabel="Share file"
+                  >
+                    <Share2 size={15} color="#2563EB" />
                   </TouchableOpacity>
 
                   {presc.file_type === 'JPG' && (
@@ -288,14 +316,19 @@ export const PrescriptionsScreen: React.FC = () => {
                         setSelectedPresc(presc);
                         setPreviewModalVisible(true);
                       }}
-                      style={[styles.actionIcon, { marginLeft: 12 }]}
+                      style={[styles.actionIconBtn, { backgroundColor: '#E8F5E9', marginLeft: 8 }]}
+                      accessibilityLabel="Preview file"
                     >
-                      <Text style={{ fontSize: 15, color: theme.success }}>👁️ Preview</Text>
+                      <Eye size={15} color="#2E7D32" />
                     </TouchableOpacity>
                   )}
 
-                  <TouchableOpacity onPress={() => handleDelete(presc)} style={[styles.actionIcon, { marginLeft: 12 }]}>
-                    <Text style={{ fontSize: 15, color: theme.danger }}>🗑️</Text>
+                  <TouchableOpacity
+                    onPress={() => handleDelete(presc)}
+                    style={[styles.actionIconBtn, { backgroundColor: '#FEE2E2', marginLeft: 8 }]}
+                    accessibilityLabel="Delete file"
+                  >
+                    <Trash2 size={15} color="#EF4444" />
                   </TouchableOpacity>
                 </View>
               </View>
@@ -398,17 +431,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  header: {
+  headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 16,
-  },
-  title: {
-    fontWeight: 'bold',
+    paddingRight: 16,
   },
   addBtn: {
     paddingHorizontal: 16,
+    height: 40,
     borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
@@ -468,8 +499,12 @@ const styles = StyleSheet.create({
     paddingTop: 8,
     justifyContent: 'flex-end',
   },
-  actionIcon: {
-    paddingVertical: 6,
+  actionIconBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   modalOverlay: {
     flex: 1,

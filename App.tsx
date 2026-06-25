@@ -26,6 +26,11 @@ import { ReportsScreen } from './src/features/reports/ReportsScreen';
 import { ProfileScreen } from './src/features/profile/ProfileScreen';
 import { NotificationsCenterScreen } from './src/features/dashboard/NotificationsCenterScreen';
 import { SearchScreen } from './src/features/dashboard/SearchScreen';
+import { SettingsScreen } from './src/features/settings/SettingsScreen';
+import { DoctorVisitsScreen } from './src/features/doctorVisits/DoctorVisitsScreen';
+import { PrescriptionsScreen } from './src/features/prescriptions/PrescriptionsScreen';
+import * as Notifications from 'expo-notifications';
+import { logMedicationDose } from './src/database/dbHelpers';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -191,6 +196,52 @@ export default function App() {
 
     // 3. Request push notifications
     requestNotificationPermissions();
+
+    // 4. Register Notification Actions listener
+    let subscription: any = null;
+    if (Platform.OS !== 'web') {
+      subscription = Notifications.addNotificationResponseReceivedListener((response) => {
+        const { actionIdentifier, notification } = response;
+        const data = notification.request.content.data;
+
+        if (data && data.medId) {
+          const { medId, medName, dosage, unit, scheduledTime } = data;
+          console.log(`Notification action: ${actionIdentifier} for med: ${medName} (${medId})`);
+
+          const todayDateStr = new Date().toISOString().split('T')[0];
+          const logScheduledTime = `${todayDateStr} ${scheduledTime || '08:00'}`;
+
+          if (actionIdentifier === 'TAKEN') {
+            logMedicationDose(medId as number, logScheduledTime, 'TAKEN');
+            import('react-native').then(RN => RN.Alert.alert('Medication Taken', `Marked ${medName} as taken.`));
+          } else if (actionIdentifier === 'SKIP') {
+            logMedicationDose(medId as number, logScheduledTime, 'SKIPPED');
+            import('react-native').then(RN => RN.Alert.alert('Medication Skipped', `Marked ${medName} as skipped.`));
+          } else if (actionIdentifier === 'SNOOZE') {
+            Notifications.scheduleNotificationAsync({
+              content: {
+                title: `⏰ Snoozed Reminder: ${medName}`,
+                body: `It is time to take ${dosage} ${unit} of ${medName}.`,
+                categoryIdentifier: 'MEDICINE_ALERT',
+                data: { medId, medName, dosage, unit, scheduledTime },
+                sound: true,
+              },
+              trigger: {
+                type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+                seconds: 10 * 60,
+              } as any,
+            });
+            import('react-native').then(RN => RN.Alert.alert('Snoozed', `Reminder for ${medName} snoozed for 10 minutes.`));
+          }
+        }
+      });
+    }
+
+    return () => {
+      if (subscription) {
+        subscription.remove();
+      }
+    };
   }, []);
 
   // Show security overlay screen if locked
@@ -237,6 +288,21 @@ export default function App() {
               name="Search"
               component={SearchScreen}
               options={{ title: 'Global Search Cabinet' }}
+            />
+            <Stack.Screen
+              name="Settings"
+              component={SettingsScreen}
+              options={{ title: 'Settings', headerShown: false }}
+            />
+            <Stack.Screen
+              name="DoctorVisits"
+              component={DoctorVisitsScreen}
+              options={{ title: 'Doctor Visits', headerShown: false }}
+            />
+            <Stack.Screen
+              name="Prescriptions"
+              component={PrescriptionsScreen}
+              options={{ title: 'Prescriptions', headerShown: false }}
             />
           </>
         ) : (

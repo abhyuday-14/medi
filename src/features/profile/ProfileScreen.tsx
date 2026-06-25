@@ -356,7 +356,7 @@ export const ProfileScreen: React.FC = () => {
           <Button
             title="Log Out Session"
             onPress={handleLogout}
-            variant="danger"
+            variant="primary"
             style={{ width: '100%', marginTop: 24, marginBottom: 40 }}
           />
         )}

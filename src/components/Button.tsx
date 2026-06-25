@@ -76,7 +76,7 @@ export const Button: React.FC<ButtonProps> = ({
     >
       {(variant === 'primary' || variant === 'danger') && !disabled && (
         <ExpoLinearGradient
-          colors={variant === 'danger' ? ['#FF6B6B', '#EF4444', '#D92A2A'] : themeMode === 'dark' ? ['#3B82F6', '#1E3A8A'] : ['#FF6B6B', '#EF4444', '#D92A2A']}
+          colors={variant === 'danger' ? ['#FF6B6B', '#EF4444', '#D92A2A'] : themeMode === 'dark' ? ['#3B82F6', '#1E3A8A'] : ['#60A5FA', '#3B82F6', '#2563EB']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={[StyleSheet.absoluteFill, { borderRadius: 32 }]}

@@ -7,6 +7,9 @@ import { getDoctorVisits, addDoctorVisit, updateDoctorVisit, DoctorVisitDB } fro
 import { Card } from '../../components/Card';
 import { Input } from '../../components/Input';
 import { Button } from '../../components/Button';
+import { PageHeader } from '../../components/PageHeader';
+import { IconContainer } from '../../components/IconContainer';
+import { Stethoscope, Calendar, MapPin, Pencil, Heart } from 'lucide-react-native';
 
 export const DoctorVisitsScreen: React.FC = () => {
   const isFocused = useIsFocused();
@@ -48,7 +51,7 @@ export const DoctorVisitsScreen: React.FC = () => {
           const diffDays = Math.ceil((followUp.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
           if (diffDays > 0 && diffDays <= 7) {
             addNotification({
-              title: `📅 Follow-up Appointment: ${visit.doctor_name}`,
+              title: `Follow-up Appointment: ${visit.doctor_name}`,
               message: `You have a follow-up scheduled on ${visit.follow_up_date} (${diffDays} days away) with ${visit.doctor_name}.`,
               type: 'appointment',
               referenceId: visit.id,
@@ -137,22 +140,30 @@ export const DoctorVisitsScreen: React.FC = () => {
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       {/* Header */}
-      <View style={styles.header}>
-        <Text style={[styles.title, { color: theme.text, fontSize: 22 * fontScale }]}>Doctor Visit Logs</Text>
-        <TouchableOpacity
-          onPress={handleOpenAdd}
-          style={[styles.addBtn, { backgroundColor: theme.primary, minHeight: 48, minWidth: 48 }]}
-        >
-          <Text style={styles.addBtnText}>+ Log Visit</Text>
-        </TouchableOpacity>
+      <View style={styles.headerRow}>
+        <PageHeader
+          title="Doctor Visit Logs"
+          icon={<Stethoscope size={22} color="#FFFFFF" />}
+          rightElement={
+            <TouchableOpacity
+              onPress={handleOpenAdd}
+              style={[styles.addBtn, { backgroundColor: theme.primary }]}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.addBtnText}>+ Log Visit</Text>
+            </TouchableOpacity>
+          }
+        />
       </View>
 
       {/* Visits List */}
       <ScrollView contentContainerStyle={styles.scrollList}>
         {visitsList.length === 0 ? (
           <View style={styles.emptyContainer}>
-            <Text style={{ fontSize: 40 }}>🩺</Text>
-            <Text style={{ color: theme.textSecondary, fontSize: 16 * fontScale, marginTop: 8, textAlign: 'center' }}>
+            <IconContainer size={64} backgroundColor="#E6F4FE">
+              <Stethoscope size={32} color="#2563EB" />
+            </IconContainer>
+            <Text style={{ color: theme.textSecondary, fontSize: 16 * fontScale, marginTop: 16, textAlign: 'center' }}>
               No doctor visits logged yet. Click "+ Log Visit" to document a consultation.
             </Text>
           </View>
@@ -167,26 +178,39 @@ export const DoctorVisitsScreen: React.FC = () => {
                   <Text style={[styles.specialization, { color: theme.primary, fontSize: 14 * fontScale }]}>
                     {visit.specialization}
                   </Text>
-                  <Text style={[styles.clinicText, { color: theme.textSecondary, fontSize: 13 * fontScale }]}>
-                    🏥 {visit.clinic_hospital}
-                  </Text>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4 }}>
+                    <MapPin size={14} color={theme.textSecondary} />
+                    <Text style={[styles.clinicText, { color: theme.textSecondary, fontSize: 13 * fontScale, marginLeft: 4 }]}>
+                      {visit.clinic_hospital}
+                    </Text>
+                  </View>
                 </View>
                 
-                <TouchableOpacity onPress={() => handleOpenEdit(visit)} style={styles.editBtn}>
-                  <Text style={{ fontSize: 16, color: theme.primary }}>✏️ Edit</Text>
+                <TouchableOpacity
+                  onPress={() => handleOpenEdit(visit)}
+                  style={[styles.editBtn, { flexDirection: 'row', alignItems: 'center' }]}
+                >
+                  <Pencil size={14} color={theme.primary} />
+                  <Text style={{ fontSize: 14, color: theme.primary, fontWeight: 'bold', marginLeft: 4 }}>Edit</Text>
                 </TouchableOpacity>
               </View>
 
               <View style={styles.detailsDivider} />
 
               <View style={styles.metaRow}>
-                <Text style={[styles.metaText, { color: theme.text, fontSize: 13 * fontScale }]}>
-                  📅 Date: <strong>{visit.visit_date}</strong>
-                </Text>
-                {visit.follow_up_date && (
-                  <Text style={[styles.metaText, { color: theme.danger, fontSize: 13 * fontScale, fontWeight: 'bold' }]}>
-                    📅 Follow-up: {visit.follow_up_date}
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Calendar size={13} color={theme.textSecondary} />
+                  <Text style={[styles.metaText, { color: theme.text, fontSize: 13 * fontScale, marginLeft: 4 }]}>
+                    Date: <Text style={{ fontWeight: 'bold' }}>{visit.visit_date}</Text>
                   </Text>
+                </View>
+                {visit.follow_up_date && (
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Calendar size={13} color={theme.danger} />
+                    <Text style={[styles.metaText, { color: theme.danger, fontSize: 13 * fontScale, fontWeight: 'bold', marginLeft: 4 }]}>
+                      Follow-up: {visit.follow_up_date}
+                    </Text>
+                  </View>
                 )}
               </View>
 
@@ -275,17 +299,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  header: {
+  headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 16,
-  },
-  title: {
-    fontWeight: 'bold',
+    paddingRight: 16,
   },
   addBtn: {
     paddingHorizontal: 16,
+    height: 40,
     borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',

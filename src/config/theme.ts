@@ -23,8 +23,8 @@ export interface ColorPalette {
 export const COLORS: Record<ThemeMode, Record<ContrastMode, ColorPalette>> = {
   light: {
     normal: {
-      primary: '#FF4D4D', // Coral Red
-      primaryLight: '#FFE5E5',
+      primary: '#3B82F6', // Soothing Blue
+      primaryLight: '#EFF6FF',
       success: '#10B981', // Emerald
       successLight: '#D1FAE5',
       warning: '#F59E0B', // Amber
@@ -38,8 +38,8 @@ export const COLORS: Record<ThemeMode, Record<ContrastMode, ColorPalette>> = {
       border: 'transparent', // Remove hard borders for premium look
     },
     high: {
-      primary: '#D92A2A', // High contrast red
-      primaryLight: '#FFCCCC',
+      primary: '#1D4ED8', // High contrast blue
+      primaryLight: '#DBEAFE',
       success: '#008000', // Pure Green
       successLight: '#E0F0E0',
       warning: '#D97706', // Strong Amber
